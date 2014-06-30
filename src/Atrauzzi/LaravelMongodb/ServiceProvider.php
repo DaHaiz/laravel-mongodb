@@ -17,6 +17,19 @@
 
 		public function register() {
 
+			// By default, obtain mappings via an L4 config syntax.
+			//
+			// Note:    If you'd like to use annotation, XML or YAML mappings, simply bind another
+			//          implementation of this interface in your project and we'll use it! :)
+			$this->app->singleton('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver', function (Application $app) {
+
+				/** @var \Illuminate\Config\Repository $laravelConfig */
+				$laravelConfig = $app->make('Illuminate\Config\Repository');
+
+				return new ConfigMapping($laravelConfig->get('mongodb::mappings'));
+
+			});
+
 			$this->app->singleton('Doctrine\MongoDB\Configuration', function (Application $app) {
 
 				/** @var \Illuminate\Config\Repository $laravelConfig */
@@ -31,6 +44,9 @@
 				$config->setHydratorNamespace('MongoDbHydrator');
 
 				$config->setDefaultDB($laravelConfig->get('mongodb::default_db'));
+
+				// Request whatever mapping driver is bound to the interface.
+				$config->setMetadataDriverImpl($app->make('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver'));
 
 				return $config;
 
