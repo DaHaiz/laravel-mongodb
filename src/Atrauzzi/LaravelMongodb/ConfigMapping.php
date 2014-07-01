@@ -126,7 +126,7 @@
 
 		protected function mapField(ClassMetadataInfo $metadata, $name, array $config) {
 
-			if(empty($config['type']))
+			if(empty($config['type']) && empty($config['id']))
 				return;
 
 			if(empty($config['name']))
