@@ -16,7 +16,8 @@
 	],
 	"require": {
 		"php": ">=5.4.0",
-		"doctrine/mongodb-odm": "dev-master"
+		"doctrine/mongodb-odm": "dev-master",
+		"laravel/framework": "4.*"
 	},
 	"autoload": {
 		"psr-4": {
