@@ -22,6 +22,8 @@
 		/**
 		 * Loads the metadata for the specified class into the provided container.
 		 *
+		 * ToDo: Caching
+		 *
 		 * ToDo: Mapped superclass
 		 * ToDo: Embedded document
 		 * ToDo: Repository classes
@@ -71,8 +73,6 @@
 			if(!empty($config['fields']))
 				foreach($config['fields'] as $name => $config)
 					$this->mapField($metadata, $name, $config);
-
-var_dump($metadata);
 
 		}
 
@@ -131,6 +131,12 @@ var_dump($metadata);
 
 			if(empty($config['name']))
 				$config['name'] = $name;
+
+			if(!empty($config['id']) && empty($config['type']))
+				$config['type'] = 'id';
+
+			if(!empty($config['id']) && empty($config['strategy']))
+				$config['strategy'] = 'auto';
 
 			$metadata->mapField($config);
 
