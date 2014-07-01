@@ -69,19 +69,10 @@
 
 			// Map any fields.
 			if(!empty($config['fields']))
-				foreach($config['fields'] as $fieldConfig)
-					$metadata->mapField($fieldConfig);
+				foreach($config['fields'] as $name => $config)
+					$this->mapField($metadata, $name, $config);
 
-			// Map any references.
-			if(!empty($config['references']))
-				foreach($config['references'] as $referenceName => $referenceConfig)
-					$this->mapReference($metadata, $referenceName, $referenceConfig);
-
-			// Map any embeds.
-			if(!empty($config['embeds']))
-				foreach($config['embeds'] as $embedName => $embedConfig)
-					$this->mapEmbed($metadata, $embedName, $embedConfig);
-
+var_dump($metadata);
 
 		}
 
@@ -133,18 +124,16 @@
 
 		}
 
-		/**
-		 * @param \Doctrine\ODM\MongoDB\Mapping\ClassMetadataInfo $metadata
-		 * @param string $referenceName
-		 * @param array $referenceConfig
-		 */
-		protected function mapReference(ClassMetadataInfo $metadata, $referenceName, array $referenceConfig) {
+		protected function mapField(ClassMetadataInfo $metadata, $name, array $config) {
 
+			if(empty($config['type']))
+				return;
 
+			if(empty($config['name']))
+				$config['name'] = $name;
 
-		}
+			$metadata->mapField($config);
 
-		protected function mapEmbed(ClassMetadataInfo $metadata, $referenceName, array $referenceConfig) {
 		}
 
 	}

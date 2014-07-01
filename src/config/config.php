@@ -21,15 +21,12 @@
 
 			'fields' => [
 				'name' => [
-
+					'type' => 'string'
+				],
+				'thing' => [
+					'type' => 'many',
 				]
 			],
-
-			'references' => [
-			],
-
-			'embeds' => [
-			]
 
 		]
 

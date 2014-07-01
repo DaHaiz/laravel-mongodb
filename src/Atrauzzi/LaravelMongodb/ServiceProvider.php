@@ -6,7 +6,7 @@
 	use Doctrine\ODM\MongoDB\Configuration;
 	use Doctrine\MongoDB\Connection;
 	use Doctrine\ODM\MongoDB\DocumentManager;
-	use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
+	use MongoClient;
 
 
 	class ServiceProvider extends Base {
@@ -52,8 +52,31 @@
 
 			});
 
-			$this->app->singleton('', function () {
+			$this->app->singleton('MongoClient', function (Application $app) {
 
+				/** @var \Illuminate\Config\Repository $laravelConfig */
+				$laravelConfig = $app->make('Illuminate\Config\Repository');
+
+				return new MongoClient(
+					$laravelConfig->get('mongodb::server')
+				);
+
+			});
+
+			$this->app->singleton('Doctrine\MongoDB\Connection', function (Application $app) {
+
+				return new Connection(
+					$app->make('MongoClient')
+				);
+
+			});
+
+			// Because of our bindings above, this one's actually a cinch!
+			$this->app->singleton('Doctrine\ODM\MongoDB\DocumentManager', function (Application $app) {
+				return DocumentManager::create(
+					$app->make('Doctrine\MongoDB\Connection'),
+					$app->make('Doctrine\MongoDB\Configuration')
+				);
 			});
 
 		}
