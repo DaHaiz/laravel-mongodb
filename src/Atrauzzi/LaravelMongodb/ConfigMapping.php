@@ -26,7 +26,6 @@
 		 *
 		 * ToDo: Mapped superclass
 		 * ToDo: Embedded document
-		 * ToDo: Repository classes
 		 *
 		 * ToDo: Inheritance type
 		 * ToDo: Change tracking policy
@@ -55,6 +54,10 @@
 			// If this entity's collection is specified.
 			if(!empty($config['collection']))
 				$metadata->setCollection($config['collection']);
+
+			// If we're configuring a repository class.
+			if(!empty($config['repository_class']))
+				$metadata->setCustomRepositoryClass($config['repository_class']);
 
 			// If we're requiring indexes.
 			if(!empty($config['require-indexes']))
