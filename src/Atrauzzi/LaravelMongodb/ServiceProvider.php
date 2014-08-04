@@ -12,7 +12,13 @@
 	class ServiceProvider extends Base {
 
 		public function boot() {
+
 			$this->package('atrauzzi/laravel-mongodb', 'mongodb');
+
+			/** @var \Illuminate\Validation\Factory $validator */
+			$validator = $this->app->make('Illuminate\Validation\Factory');
+			$validator->extend('mongo_unique', 'Atrauzzi\LaravelMongodb\ValidationRule\Unique@validate');
+
 		}
 
 		public function register() {
