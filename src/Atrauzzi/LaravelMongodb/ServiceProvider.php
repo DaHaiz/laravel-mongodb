@@ -79,6 +79,8 @@
 				);
 			});
 
+			$this->app->after('Atrauzzi\LaravelMongodb\ShutdownHandler');
+
 		}
 
 	}
