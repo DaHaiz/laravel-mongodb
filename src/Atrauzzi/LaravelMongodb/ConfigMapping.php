@@ -135,6 +135,13 @@
 			if(empty($config['name']))
 				$config['name'] = $name;
 
+			if(
+				!empty($config['type'])
+				&& ($config['type'] == 'one' || $config['type'] == 'many')
+				&& empty($config['reference'])
+			)
+				$config['embedded'] = true;
+
 			if(!empty($config['id']) && empty($config['type']))
 				$config['type'] = 'id';
 
