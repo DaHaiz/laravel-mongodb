@@ -18,6 +18,7 @@
 			/** @var \Illuminate\Validation\Factory $validator */
 			$validator = $this->app->make('Illuminate\Validation\Factory');
 			$validator->extend('mongo_unique', 'Atrauzzi\LaravelMongodb\ValidationRule\Unique@validate');
+			$validator->extend('mongo_exists', 'Atrauzzi\LaravelMongodb\ValidationRule\Exists@validate');
 
 		}
 
