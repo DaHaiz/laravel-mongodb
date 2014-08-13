@@ -27,6 +27,9 @@
 		 */
 		public function validate($attribute, $value, $parameters) {
 
+			if(is_null($value))
+				return true;
+
 			$collection = $parameters[0];
 			$field = $parameters[1];
 
