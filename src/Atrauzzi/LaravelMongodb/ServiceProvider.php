@@ -86,7 +86,7 @@
 				);
 			});
 
-			$this->app->after('Atrauzzi\LaravelMongodb\ShutdownHandler');
+			$this->app['Illuminate\Routing\Router']->after('Atrauzzi\LaravelMongodb\ShutdownHandler');
 
 		}
 
