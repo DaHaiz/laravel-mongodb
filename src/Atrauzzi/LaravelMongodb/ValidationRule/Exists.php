@@ -18,7 +18,7 @@
 		}
 
 		/**
-		 * mongo_unique:users,email_address,10
+		 * mongo_exists:users,email_address,10
 		 *
 		 * @param $attribute
 		 * @param $value
