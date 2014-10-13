@@ -24,7 +24,6 @@
 		 *
 		 * ToDo: Caching
 		 *
-		 * ToDo: Mapped superclass
 		 * ToDo: Embedded document
 		 *
 		 * ToDo: Inheritance type
@@ -76,6 +75,13 @@
 			if(!empty($config['fields']))
 				foreach($config['fields'] as $name => $config)
 					$this->mapField($metadata, $name, $config);
+
+			// If this is an abstract superclass.
+			if(!empty($config['abstract'])) {
+				$metadata->isMappedSuperclass = true;
+				$metadata->setCustomRepositoryClass(null);
+				$metadata->setCollection(null);
+			}
 
 		}
 
