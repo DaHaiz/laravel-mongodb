@@ -18,9 +18,7 @@
 		}
 
 		public function filter() {
-
 			$this->documentManager->flush();
-
 		}
 
 	}

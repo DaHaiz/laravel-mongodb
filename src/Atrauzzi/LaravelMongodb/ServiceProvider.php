@@ -86,7 +86,10 @@
 				);
 			});
 
-			$this->app['Illuminate\Routing\Router']->after('Atrauzzi\LaravelMongodb\ShutdownHandler');
+			// ToDo: Convert this to Laravel 5 middlewarez.
+			/** @var \Illuminate\Routing\Router $router */
+			$router = $this->app['Illuminate\Routing\Router'];
+			$router->after('Atrauzzi\LaravelMongodb\ShutdownHandler');
 
 		}
 
