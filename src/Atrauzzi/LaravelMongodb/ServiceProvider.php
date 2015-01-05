@@ -1,36 +1,17 @@
 <?php namespace Atrauzzi\LaravelMongodb {
 
-	use Illuminate\Contracts\Config\Repository;
 	use Illuminate\Support\ServiceProvider as Base;
 	//
 	use Illuminate\Foundation\Application;
 	use Doctrine\ODM\MongoDB\Configuration;
-	use Doctrine\MongoDB\Connection;
 	use Doctrine\ODM\MongoDB\DocumentManager;
+	use Doctrine\MongoDB\Connection;
 	use MongoClient;
 
 
 	class ServiceProvider extends Base {
 
-		/** @var Repository */
-		protected $config;
-
-		public function __construct(Repository $config) {
-			$this->config = $config;
-		}
-
 		public function register() {
-
-			$this->config->set('laravel_mongodb', require '../');
-
-		}
-
-		public function boot() {
-
-			/** @var \Illuminate\Validation\Factory $validator */
-			$validator = $this->app->make('Illuminate\Validation\Factory');
-			$validator->extend('mongo_unique', 'Atrauzzi\LaravelMongodb\ValidationRule\Unique@validate');
-			$validator->extend('mongo_exists', 'Atrauzzi\LaravelMongodb\ValidationRule\Exists@validate');
 
 			// By default, obtain mappings via an L4 config syntax.
 			//
@@ -41,7 +22,7 @@
 				/** @var \Illuminate\Config\Repository $laravelConfig */
 				$laravelConfig = $app->make('Illuminate\Config\Repository');
 
-				return new ConfigMapping($laravelConfig->get('mongodb::mappings'));
+				return new ConfigMapping($laravelConfig->get('laravel_mongodb.mappings'));
 
 			});
 
@@ -58,7 +39,7 @@
 				$config->setHydratorDir(storage_path('cache/MongoDbHydrators'));
 				$config->setHydratorNamespace('MongoDbHydrator');
 
-				$config->setDefaultDB($laravelConfig->get('mongodb::default_db'));
+				$config->setDefaultDB($laravelConfig->get('laravel_mongodb.default_db', 'laravel'));
 
 				// Request whatever mapping driver is bound to the interface.
 				$config->setMetadataDriverImpl($app->make('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver'));
@@ -73,7 +54,7 @@
 				$laravelConfig = $app->make('Illuminate\Config\Repository');
 
 				return new MongoClient(
-					$laravelConfig->get('mongodb::server')
+					$laravelConfig->get('laravel_mongodb.server')
 				);
 
 			});
@@ -93,6 +74,15 @@
 					$app->make('Doctrine\MongoDB\Configuration')
 				);
 			});
+
+		}
+
+		public function boot() {
+
+			/** @var \Illuminate\Validation\Factory $validator */
+			$validator = $this->app->make('Illuminate\Validation\Factory');
+			$validator->extend('mongo_unique', 'Atrauzzi\LaravelMongodb\ValidationRule\Unique@validate');
+			$validator->extend('mongo_exists', 'Atrauzzi\LaravelMongodb\ValidationRule\Exists@validate');
 
 			// ToDo: Convert this to Laravel 5 middlewarez?
 			/** @var \Illuminate\Routing\Router $router */
