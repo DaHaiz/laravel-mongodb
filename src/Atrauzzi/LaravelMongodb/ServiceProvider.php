@@ -77,6 +77,7 @@
 
 		}
 
+		// ToDo: Fun fact, boot supports method-injection!
 		public function boot() {
 
 			/** @var \Illuminate\Validation\Factory $validator */
