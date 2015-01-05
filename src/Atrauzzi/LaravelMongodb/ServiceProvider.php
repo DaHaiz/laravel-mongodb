@@ -1,5 +1,6 @@
 <?php namespace Atrauzzi\LaravelMongodb {
 
+	use Illuminate\Contracts\Config\Repository;
 	use Illuminate\Support\ServiceProvider as Base;
 	//
 	use Illuminate\Foundation\Application;
@@ -11,18 +12,25 @@
 
 	class ServiceProvider extends Base {
 
-		public function boot() {
+		/** @var Repository */
+		protected $config;
 
-			$this->package('atrauzzi/laravel-mongodb', 'mongodb');
+		public function __construct(Repository $config) {
+			$this->config = $config;
+		}
+
+		public function register() {
+
+			$this->config->set('laravel_mongodb', require '../');
+
+		}
+
+		public function boot() {
 
 			/** @var \Illuminate\Validation\Factory $validator */
 			$validator = $this->app->make('Illuminate\Validation\Factory');
 			$validator->extend('mongo_unique', 'Atrauzzi\LaravelMongodb\ValidationRule\Unique@validate');
 			$validator->extend('mongo_exists', 'Atrauzzi\LaravelMongodb\ValidationRule\Exists@validate');
-
-		}
-
-		public function register() {
 
 			// By default, obtain mappings via an L4 config syntax.
 			//
@@ -86,7 +94,7 @@
 				);
 			});
 
-			// ToDo: Convert this to Laravel 5 middlewarez.
+			// ToDo: Convert this to Laravel 5 middlewarez?
 			/** @var \Illuminate\Routing\Router $router */
 			$router = $this->app['Illuminate\Routing\Router'];
 			$router->after('Atrauzzi\LaravelMongodb\ShutdownHandler');
