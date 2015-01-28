@@ -3,6 +3,9 @@
 	use Illuminate\Support\ServiceProvider as Base;
 	//
 	use Illuminate\Foundation\Application;
+	use Illuminate\Config\Repository as Config;
+	use Illuminate\Contracts\Validation\Factory as ValidatorFactory;
+	use Illuminate\Contracts\Routing\Registrar as Router;
 	use Doctrine\ODM\MongoDB\Configuration;
 	use Doctrine\ODM\MongoDB\DocumentManager;
 	use Doctrine\MongoDB\Connection;
@@ -11,6 +14,9 @@
 
 	class ServiceProvider extends Base {
 
+		/**
+		 * Called on framework init.
+		 */
 		public function register() {
 
 			// Note:    If you'd like to use annotation, XML or YAML mappings, simply bind another
@@ -47,22 +53,14 @@
 			});
 
 			$this->app->singleton('MongoClient', function (Application $app) {
-
 				/** @var \Illuminate\Config\Repository $laravelConfig */
 				$laravelConfig = $app->make('Illuminate\Config\Repository');
-
-				return new MongoClient(
-					$laravelConfig->get('mongodb.host')
-				);
+				return new MongoClient($laravelConfig->get('mongodb.host'));
 
 			});
 
 			$this->app->singleton('Doctrine\MongoDB\Connection', function (Application $app) {
-
-				return new Connection(
-					$app->make('MongoClient')
-				);
-
+				return new Connection($app->make('MongoClient'));
 			});
 
 			// Because of our bindings above, this one's actually a cinch!
@@ -75,25 +73,25 @@
 
 		}
 
-		// ToDo: Fun fact, boot supports method-injection!
-		public function boot() {
+		/**
+		 * Called before any commands or requests are run.
+		 *
+		 * @param Config $config
+		 * @param ValidatorFactory $validator
+		 * @param Router $router
+		 */
+		public function boot(Config $config, ValidatorFactory $validator, Router $router) {
 
 			$this->publishes([
 				__DIR__ . '/../../../config/mongodb.php' => config_path('mongodb.php')
 			]);
 
-			/** @var \Illuminate\Config\Repository $config */
-			$config = $this->app->make('Illuminate\Config\Repository');
 			$config->set('mongodb.default-db', 'localhost');
 
-			/** @var \Illuminate\Validation\Factory $validator */
-			$validator = $this->app->make('Illuminate\Validation\Factory');
 			$validator->extend('mongo_unique', 'Atrauzzi\LaravelMongodb\ValidationRule\Unique@validate');
 			$validator->extend('mongo_exists', 'Atrauzzi\LaravelMongodb\ValidationRule\Exists@validate');
 
 			// ToDo: Convert this to Laravel 5 middleware?
-			/** @var \Illuminate\Routing\Router $router */
-			$router = $this->app['Illuminate\Routing\Router'];
 			$router->after('Atrauzzi\LaravelMongodb\ShutdownHandler');
 
 		}
