@@ -22,18 +22,10 @@
 			// Note:    If you'd like to use annotation, XML or YAML mappings, simply bind another
 			//          implementation of this interface in your project and we'll use it! :)
 			$this->app->singleton('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver', function (Application $app) {
-
-				/** @var \Illuminate\Config\Repository $laravelConfig */
-				$laravelConfig = $app->make('Illuminate\Config\Repository');
-
-				return new ConfigMapping($laravelConfig->get('mongodb.mappings'));
-
+				return new ConfigMapping(config('mongodb.mappings'));
 			});
 
 			$this->app->singleton('Doctrine\MongoDB\Configuration', function (Application $app) {
-
-				/** @var \Illuminate\Config\Repository $laravelConfig */
-				$laravelConfig = $app->make('Illuminate\Config\Repository');
 
 				$config = new Configuration();
 
@@ -43,7 +35,7 @@
 				$config->setHydratorDir(storage_path('cache/MongoDbHydrators'));
 				$config->setHydratorNamespace('MongoDbHydrator');
 
-				$config->setDefaultDB($laravelConfig->get('mongodb.default_db', 'laravel'));
+				$config->setDefaultDB(config('mongodb.default_db', 'laravel'));
 
 				// Request whatever mapping driver is bound to the interface.
 				$config->setMetadataDriverImpl($app->make('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver'));
@@ -53,10 +45,7 @@
 			});
 
 			$this->app->singleton('MongoClient', function (Application $app) {
-				/** @var \Illuminate\Config\Repository $laravelConfig */
-				$laravelConfig = $app->make('Illuminate\Config\Repository');
-				return new MongoClient($laravelConfig->get('mongodb.host'));
-
+				return new MongoClient(config('mongodb.host', 'localhost'));
 			});
 
 			$this->app->singleton('Doctrine\MongoDB\Connection', function (Application $app) {
@@ -85,8 +74,6 @@
 			$this->publishes([
 				__DIR__ . '/../config/mongodb.php' => config_path('mongodb.php')
 			]);
-
-			$config->set('mongodb.default-db', 'localhost');
 
 			$validator->extend('mongo_unique', 'Atrauzzi\LaravelMongodb\ValidationRule\Unique@validate');
 			$validator->extend('mongo_exists', 'Atrauzzi\LaravelMongodb\ValidationRule\Exists@validate');
