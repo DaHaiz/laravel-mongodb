@@ -83,7 +83,7 @@
 		public function boot(Config $config, ValidatorFactory $validator, Router $router) {
 
 			$this->publishes([
-				__DIR__ . '/../../../config/mongodb.php' => config_path('mongodb.php')
+				__DIR__ . '/../config/mongodb.php' => config_path('mongodb.php')
 			]);
 
 			$config->set('mongodb.default-db', 'localhost');
